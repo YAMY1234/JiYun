@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.resource.mapper.ResourceRepoMapper">
+
+	<resultMap type="ResourceRepo" id="ResourceRepoResult">
+		<id     property="repoId"     column="repo_id"     />
+		<result property="parentId"   column="parent_id"   />
+		<result property="ancestors"  column="ancestors"   />
+		<result property="repoName"   column="repo_name"   />
+		<result property="orderNum"   column="order_num"   />
+		<result property="leader"     column="leader"      />
+		<result property="type"      column="type"       />
+		<result property="email"      column="email"       />
+		<result property="status"     column="status"      />
+		<result property="delFlag"    column="del_flag"    />
+		<result property="parentName" column="parent_name" />
+		<result property="createBy"   column="create_by"   />
+		<result property="createTime" column="create_time" />
+		<result property="updateBy"   column="update_by"   />
+		<result property="updateTime" column="update_time" />
+	</resultMap>
+	
+	<sql id="selectRepoVo">
+        select d.repo_id, d.parent_id, d.ancestors, d.repo_name, d.order_num, d.leader, d.type, d.email, d.status, d.del_flag, d.create_by, d.create_time ,d.update_time
+		from resource_repo d
+    </sql>
+    
+	<select id="selectRepoList" parameterType="ResourceRepo" resultMap="ResourceRepoResult">
+        <include refid="selectRepoVo"/>
+        where d.del_flag = '0'
+		<if test="leader != null and leader != 'all'">
+			AND leader = #{leader}
+		</if>
+		<if test="type != null and type != 'all'">
+			AND type = #{type}
+		</if>
+		<if test="repoId != null and repoId != 0">
+			AND repo_id = #{repoId}
+		</if>
+        <if test="parentId != null and parentId != 0">
+			AND parent_id = #{parentId}
+		</if>
+		<if test="repoName != null and repoName != ''">
+			AND repo_name like concat('%', #{repoName}, '%')
+		</if>
+		<if test="status != null and status != ''">
+			AND status = #{status}
+		</if>
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+		order by d.parent_id, d.order_num
+    </select>
+
+	<select id="selectRepoListByUsername" parameterType="ResourceRepo" resultMap="ResourceRepoResult">
+		<include refid="selectRepoVo"/>
+		where d.del_flag = '0' AND
+		<if test="leader != null and leader != 'super'">
+			AND d.leader = #{leader}
+		</if>
+		<if test="type != null and type != ''">
+			AND d.type = #{type}
+		</if>
+		<if test="repoId != null and repoId != 0">
+			AND repo_id = #{repoId}
+		</if>
+		<if test="parentId != null and parentId != 0">
+			AND parent_id = #{parentId}
+		</if>
+		<if test="repoName != null and repoName != ''">
+			AND repo_name like concat('%', #{repoName}, '%')
+		</if>
+		<if test="status != null and status != ''">
+			AND status = #{status}
+		</if>
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+		order by d.parent_id, d.order_num
+	</select>
+
+
+
+    <select id="selectRepoListByRoleId" resultType="Long">
+		select d.repo_id
+		from resource_repo d
+            left join sys_role_repo rd on d.repo_id = rd.repo_id
+        where rd.role_id = #{roleId}
+            <if test="repoCheckStrictly">
+              and d.repo_id not in (select d.parent_id from resource_repo d inner join sys_role_repo rd on d.repo_id = rd.repo_id and rd.role_id = #{roleId})
+            </if>
+		order by d.parent_id, d.order_num
+	</select>
+    
+    <select id="selectRepoById" parameterType="Long" resultMap="ResourceRepoResult">
+		<include refid="selectRepoVo"/>
+		where repo_id = #{repoId}
+	</select>
+    
+    <select id="checkRepoExistUser" parameterType="Long" resultType="int">
+		select count(1) from sys_user where repo_id = #{repoId} and del_flag = '0'
+	</select>
+	
+	<select id="hasChildByRepoId" parameterType="Long" resultType="int">
+		select count(1) from resource_repo
+		where del_flag = '0' and parent_id = #{repoId} limit 1
+	</select>
+	
+	<select id="selectChildrenRepoById" parameterType="Long" resultMap="ResourceRepoResult">
+		select * from resource_repo where find_in_set(#{repoId}, ancestors)
+	</select>
+	
+	<select id="selectNormalChildrenRepoById" parameterType="Long" resultType="int">
+		select count(*) from resource_repo where status = 0 and del_flag = '0' and find_in_set(#{repoId}, ancestors)
+	</select>
+	
+	<select id="checkRepoNameUnique" resultMap="ResourceRepoResult">
+	    <include refid="selectRepoVo"/>
+		where repo_name=#{repoName} and parent_id = #{parentId} limit 1
+	</select>
+    
+    <insert id="insertRepo" parameterType="ResourceRepo">
+ 		insert into resource_repo(
+ 			<if test="repoId != null and repoId != 0">repo_id,</if>
+ 			<if test="parentId != null and parentId != 0">parent_id,</if>
+ 			<if test="repoName != null and repoName != ''">repo_name,</if>
+ 			<if test="ancestors != null and ancestors != ''">ancestors,</if>
+ 			<if test="orderNum != null">order_num,</if>
+ 			<if test="leader != null and leader != ''">leader,</if>
+ 			<if test="type != null and type != ''">type,</if>
+ 			<if test="email != null and email != ''">email,</if>
+ 			<if test="status != null">status,</if>
+ 			<if test="createBy != null and createBy != ''">create_by,</if>
+ 			create_time
+ 		)values(
+ 			<if test="repoId != null and repoId != 0">#{repoId},</if>
+ 			<if test="parentId != null and parentId != 0">#{parentId},</if>
+ 			<if test="repoName != null and repoName != ''">#{repoName},</if>
+ 			<if test="ancestors != null and ancestors != ''">#{ancestors},</if>
+ 			<if test="orderNum != null">#{orderNum},</if>
+ 			<if test="leader != null and leader != ''">#{leader},</if>
+ 			<if test="type != null and type != ''">#{type},</if>
+ 			<if test="email != null and email != ''">#{email},</if>
+ 			<if test="status != null">#{status},</if>
+ 			<if test="createBy != null and createBy != ''">#{createBy},</if>
+ 			sysdate()
+ 		)
+	</insert>
+	
+	<update id="updateRepo" parameterType="ResourceRepo">
+ 		update resource_repo
+ 		<set>
+ 			<if test="parentId != null and parentId != 0">parent_id = #{parentId},</if>
+ 			<if test="repoName != null and repoName != ''">repo_name = #{repoName},</if>
+ 			<if test="ancestors != null and ancestors != ''">ancestors = #{ancestors},</if>
+ 			<if test="orderNum != null">order_num = #{orderNum},</if>
+ 			<if test="leader != null">leader = #{leader},</if>
+ 			<if test="type != null">type = #{type},</if>
+ 			<if test="email != null">email = #{email},</if>
+ 			<if test="status != null and status != ''">status = #{status},</if>
+ 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+ 			update_time = sysdate()
+ 		</set>
+ 		where repo_id = #{repoId}
+	</update>
+	
+	<update id="updateRepoChildren" parameterType="java.util.List">
+	    update resource_repo set ancestors =
+	    <foreach collection="repos" item="item" index="index"
+	        separator=" " open="case repo_id" close="end">
+	        when #{item.repoId} then #{item.ancestors}
+	    </foreach>
+	    where repo_id in
+	    <foreach collection="repos" item="item" index="index"
+	        separator="," open="(" close=")">
+	        #{item.repoId}
+	    </foreach>
+	</update>
+	 
+	<update id="updateRepoStatusNormal" parameterType="Long">
+ 	    update resource_repo set status = '0' where repo_id in 
+ 	    <foreach collection="array" item="repoId" open="(" separator="," close=")">
+        	#{repoId}
+        </foreach>
+	</update>
+	
+	<delete id="deleteRepoById" parameterType="Long">
+		update resource_repo set del_flag = '2' where repo_id = #{repoId}
+	</delete>
+
+</mapper> 
