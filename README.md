@@ -26,11 +26,11 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 
 ### 2.1.1 Main function description
 
-1, resource content mapping - according to the user equipment learning resources Path address in the Cloud as a Service to build a relationship image, learning resources selection, submitted by the user itself needs to manage learning resources synchronization to the server.
+1. resource content mapping - according to the user equipment learning resources Path address in the Cloud as a Service to build a relationship image, learning resources selection, submitted by the user itself needs to manage learning resources synchronization to the server.
 
 2. Database management - Construct a resource management database for each user's learning resource information, sub-device, and sub-category in the cloud. The purpose of online resource unified management is to be able to manage multiple search codes such as subjects, equipment categories, resource categories, and resource names. Corresponding to the retrieved through the database Cloud as a Service physical storage location, access the file content stored in the server.
 
-3, update synchronization - according to user request update, add, query resources, the new resource will be in the Cloud as a Service server server side to set up a new content mapping, while building a new item in the database side correspondence table, delete the resource will delete the above two.
+3. update synchronization - according to user request update, add, query resources, the new resource will be in the Cloud as a Service server server side to set up a new content mapping, while building a new item in the database side correspondence table, delete the resource will delete the above two.
 
 4. Interactive function - The system can be used to log in on any device. After logging in, it has the ability to manage, query, and access the resource information corresponding to each device, software, and category of the user. Due to the large amount of information transmission and display content of the access information, consider opening the image file on the browsing server online through a web page. There is no modification function added during the access process. The modification function needs to be updated and synchronized locally after the modification is completed. The adjustment of specific functions will be improved in the system implementation link. The basic flow is as follows.
 
@@ -69,7 +69,7 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 | Field Meaning | Field Name | Type | Constraint |
 | -------- | ------------- | ------------ | ------------------------ |
 | 资源路径 | resource_path | varchar(256) | primary key\|foreign key |
-| 设备路径 | device_path   | varchar(256) | primary key\|foreign key |
+| Device Path | device_path   | varchar(256) | primary key\|foreign key |
 | resource name | resource_id | varchar (30) | not null |
 
  
@@ -78,9 +78,9 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 
 | Field Meaning | Field Name | Type | Constraint |
 | -------- | -------------- | ------------ | ------------------------ |
-| 设备路径 | dev_path       | varchar(256) | primary key\|foreign key |
-| 资源路径 | resource_path  | varchar(256) | primary key\|foreign key |
-| 资源类型 | resource_type  | varchar(30)  | not null\|foreign key    |
+| Resource Path | dev_path       | varchar(256) | primary key\|foreign key |
+| Device Path | resource_path  | varchar(256) | primary key\|foreign key |
+| Resource Type | resource_type  | varchar(30)  | not null\|foreign key    |
 | Resource size | resource_space | integer | |
 | resource name | resource_id | varchar (30) | not null |
 
@@ -90,9 +90,9 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 
 | Field Meaning | Field Name | Type | Constraint |
 | -------- | ------------- | ------------ | ------------------------ |
-| 设备路径 | dev_path      | varchar(256) | primary key\|foreign key |
-| 资源路径 | resource_path | varchar(256) | primary key\|foreign key |
-| 用户名   | user_id       | varchar(30)  | foreign key\|not null    |
+| Device Path | dev_path      | varchar(256) | primary key\|foreign key |
+| Resource Path | resource_path | varchar(256) | primary key\|foreign key |
+| user name | user_id       | varchar(30)  | foreign key\|not null    |
 | Subject Name | class_id | varchar (30) | not null |
 | resource name | resource_id | varchar (30) | not null |
 
@@ -102,10 +102,10 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 
 | Field Meaning | Field Name | Type | Constraint |
 | -------- | ------------- | ------------ | ------------------------ |
-| 用户id   | user_id       | varchar(256) | foreign key              |
-| 资源路径 | resource_path | varchar(256) | primary key\|foreign key |
+| User name | user_id       | varchar(256) | foreign key              |
+| resource path | resource_path | varchar(256) | primary key\|foreign key |
 | resource name | resource_id | varchar (30) | not null |
-| 设备路径 | dev_path      | varchar(256) | primary key\|foreign key |
+| device path | dev_path      | varchar(256) | primary key\|foreign key |
 
  
 
@@ -113,10 +113,10 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 
 | Field Meaning | Field Name | Type | Constraint |
 | -------- | ------------- | ------------ | ------------------------ |
-| 用户id   | user_id       | varchar(256) | foreign key              |
-| 资源路径 | resource_path | varchar(256) | primary key\|foreign key |
+| User name | user_id       | varchar(256) | foreign key              |
+| resource path | resource_path | varchar(256) | primary key\|foreign key |
 | resource name | resource_id | varchar (30) | not null |
-| 设备路径 | dev_path      | varchar(256) | primary key\|foreign key |
+| device path | dev_path      | varchar(256) | primary key\|foreign key |
 
  
 
@@ -124,10 +124,10 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 
 | Field Meaning | Field Name | Type | Constraint |
 | ---------------- | --------------- | ------------ | ------------------------ |
-| 用户id           | user_id         | varchar(256) | foreign key              |
+| User name  | user_id         | varchar(256) | foreign key              |
 | resource name | resource_id | varchar (30) | not null |
-| 设备路径         | dev_path        | varchar(256) | primary key\|foreign key |
-| 资源路径         | resource_path   | varchar(256) | primary key\|foreign key |
+| device path | dev_path        | varchar(256) | primary key\|foreign key |
+| resource name | resource_path   | varchar(256) | primary key\|foreign key |
 | Resource last used | recent_use_time | Timestamp | not null |
 
  
@@ -136,10 +136,10 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 
 | Field Meaning | Field Name | Type | Constraint |
 | -------------- | ------------- | ------------ | ------------------------ |
-| 用户id         | user_id       | varchar(256) | foreign key              |
+| User name | user_id       | varchar(256) | foreign key              |
 | resource name | resource_id | varchar (30) | not null |
-| 设备路径       | dev_path      | varchar(256) | primary key\|foreign key |
-| 资源路径       | resource_path | varchar(256) | primary key\|foreign key |
+| device path | dev_path      | varchar(256) | primary key\|foreign key |
+| resource name | resource_path | varchar(256) | primary key\|foreign key |
 | Frequency of use in the past week | frequency | double | not null |
 
  
@@ -151,7 +151,7 @@ Based on Cloud as a Service With the development of technology, Baidu network di
 | Space ID | cloud_id | varchar (30) | primary key |
 | Number of devices | dev_path | varchar (256) | not null |
 | Number of users | user_number | integer | not null |
-| 用户id   | user_id     | varchar(256) | foreign key |
+| User name | user_id     | varchar(256) | foreign key |
 
  
 
